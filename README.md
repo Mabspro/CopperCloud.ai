@@ -290,6 +290,54 @@ Analytics:
 
 ---
 
+## Project Structure
+
+```
+coppercloud.ai/
+├── index.html              # Main landing page
+├── styles.css              # Custom styling and animations
+├── script.js               # Interactive functionality
+├── vercel.json            # Deployment configuration
+├── package.json           # Project metadata
+├── README.md              # This file
+├── LICENSE                # MIT License
+├── .gitignore             # Git exclusions
+├── .env.example           # Environment variables template
+│
+├── assets/                # 🎨 Static Assets
+│   ├── images/            # Product images, screenshots, og-image
+│   ├── icons/             # Favicons, app icons, custom icons
+│   ├── fonts/             # Custom fonts (if self-hosting)
+│   └── README.md          # Asset guidelines
+│
+├── components/            # 🧩 Reusable Components (future)
+│   └── README.md          # Component development guide
+│
+├── docs/                  # 📁 Documentation & Strategy
+│   ├── CC-Strategy.md             # Strategic positioning guide
+│   ├── Site-Aesthetics.md         # Design system documentation
+│   ├── Project-Brief.md           # Original project brief
+│   ├── DEPLOYMENT.md              # Deployment procedures
+│   ├── VERCEL_ENV_SETUP.md        # Environment setup guide
+│   ├── POST-LAUNCH-SETUP.md       # Post-launch roadmap
+│   ├── PROJECT_REVIEW_REPORT.md   # Technical review
+│   ├── code-example.md            # Code examples
+│   └── critique-starting-point.md # Initial critique
+│
+└── .github/               # ⚙️ GitHub Configuration
+    └── workflows/         # GitHub Actions
+        └── deploy.yml     # Deployment validation workflow
+```
+
+### Directory Purpose
+
+- **Root** - Core site files (HTML, CSS, JS, config)
+- **assets/** - All static assets organized by type
+- **components/** - Future modular components
+- **docs/** - Internal documentation and strategy
+- **.github/** - GitHub Actions and repository config
+```
+
 ## Quick Start
 
 ```bash
@@ -299,11 +347,12 @@ git clone https://github.com/Mabspro/CopperCloud.ai.git
 # Open in browser
 open index.html
 
+# For local development (optional)
+npm run dev  # Starts server at http://localhost:3000
+
 # Deploy to production
-# Copy files to hosting provider
-# Configure domain DNS
-# Set up analytics tracking
-# Test all functionality
+# Automatic via Git push to main branch
+# Vercel handles deployment (1-2 minutes)
 ```
 
 **Status**: Ready for Monday's ZDA Data Sovereignty Roundtable  

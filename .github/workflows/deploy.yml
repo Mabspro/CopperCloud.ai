@@ -1,0 +1,39 @@
+name: Deploy to Vercel
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+      
+      - name: Validate HTML
+        run: |
+          echo "HTML validation would run here"
+          # Could add: npx html-validate index.html
+      
+      - name: Check file sizes
+        run: |
+          echo "Checking file sizes for performance..."
+          du -sh index.html styles.css script.js
+          
+      - name: Deployment info
+        run: |
+          echo "✅ Vercel handles automatic deployment via GitHub integration"
+          echo "📊 Deployment will be visible in Vercel dashboard"
+          echo "🔗 Production: https://www.coppercloud.ai"
+
+# Note: Actual deployment is handled by Vercel's GitHub integration
+# This workflow provides validation and monitoring

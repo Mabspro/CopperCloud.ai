@@ -45,3 +45,7 @@ coverage/
 
 # Optional eslint cache
 .eslintcache
+
+# Keep empty directories
+!assets/.gitkeep
+!components/.gitkeep
