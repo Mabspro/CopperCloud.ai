@@ -632,23 +632,24 @@ body {
     background: rgba(243, 130, 24, 0.15);
     box-shadow: 0 10px 30px rgba(243, 130, 24, 0.3);
     z-index: 10;
-    filter: brightness(1.1);
+    filter: brightness(1.1) scale(1.05);
 }
 
-/* Hover for cards without positioning transforms (Northwestern, Northern) */
+/* Hover for Northwestern and Northern - standard transform */
 .grid-node:nth-child(2):hover,
 .grid-node:nth-child(3):hover {
     transform: translateY(-5px) scale(1.05);
+    filter: brightness(1.1);
 }
 
-/* Hover for Central Province - preserve centering transform */
+/* Hover for Central Province - adjust top property to lift while keeping transform */
 .grid-node:nth-child(1):hover {
-    transform: translate(-50%, calc(-50% - 5px)) scale(1.05);
+    top: calc(50% - 5px);
 }
 
-/* Hover for Southern Province - preserve horizontal centering */
+/* Hover for Southern Province - adjust bottom property to lift */
 .grid-node:nth-child(4):hover {
-    transform: translateX(-50%) translateY(-5px) scale(1.05);
+    bottom: calc(12% + 5px);
 }
 
 .grid-node:hover .node-pulse {
