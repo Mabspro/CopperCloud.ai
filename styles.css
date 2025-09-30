@@ -26,6 +26,7 @@ body {
     --copper-primary: #F38218;
     --copper-secondary: #B8860B;
     --gold: #FFD700;
+    --emerald-green: #2C6E63;
     --bg-primary: #0A0A0B;
     --bg-secondary: rgba(255, 255, 255, 0.02);
     --text-primary: #ffffff;
@@ -33,6 +34,7 @@ body {
     --text-tertiary: rgba(255, 255, 255, 0.6);
     --border-primary: rgba(255, 255, 255, 0.1);
     --border-accent: rgba(243, 130, 24, 0.3);
+    --border-green: rgba(44, 110, 99, 0.3);
     --shadow-primary: rgba(0, 0, 0, 0.3);
     --shadow-accent: rgba(243, 130, 24, 0.3);
     --gradient-primary: linear-gradient(135deg, var(--copper-primary) 0%, var(--gold) 100%);
@@ -238,6 +240,21 @@ body {
     padding: 12rem 0 6rem;
     text-align: center;
     position: relative;
+    background: 
+        repeating-linear-gradient(
+            0deg,
+            transparent,
+            transparent 50px,
+            rgba(243, 130, 24, 0.02) 50px,
+            rgba(243, 130, 24, 0.02) 51px
+        ),
+        repeating-linear-gradient(
+            90deg,
+            transparent,
+            transparent 50px,
+            rgba(243, 130, 24, 0.02) 50px,
+            rgba(243, 130, 24, 0.02) 51px
+        );
 }
 
 .hero-badge {
@@ -748,6 +765,23 @@ body {
 
 .card-icon .flag-icon {
     font-size: 1.5rem;
+}
+
+/* Emerald green accent for Renewable Integration card (6th card) */
+.cards-grid .premium-card:nth-child(6) .card-icon {
+    background: linear-gradient(135deg, rgba(44, 110, 99, 0.3), rgba(243, 130, 24, 0.2));
+}
+
+.cards-grid .premium-card:nth-child(6) .card-icon svg {
+    color: var(--emerald-green);
+}
+
+.cards-grid .premium-card:nth-child(6):hover {
+    border-color: var(--border-green);
+}
+
+.cards-grid .premium-card:nth-child(6):hover::before {
+    background: linear-gradient(90deg, transparent, rgba(44, 110, 99, 0.5), transparent);
 }
 
 .card-title {
