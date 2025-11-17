@@ -69,7 +69,7 @@
     flex: 1;
     display: flex;
     flex-direction: column;
-    padding-top: 80px;
+    padding-top: 120px; /* Increased for mobile header wrapping */
 }
 
 .slide {
@@ -151,14 +151,14 @@
 
 .visualization-iframe {
     width: 100%;
-    height: 500px;
+    height: 600px; /* Increased from 500px for better visibility */
     border: none;
     display: block;
 }
 
 @media (min-height: 900px) {
     .visualization-iframe {
-        height: 600px;
+        height: 700px; /* Increased from 600px */
     }
 }
 
@@ -356,7 +356,7 @@
     }
 
     .visualization-iframe {
-        height: 400px;
+        height: 500px; /* Increased from 400px for better mobile viewing */
     }
 
     .key-metrics {
