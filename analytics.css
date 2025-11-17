@@ -13,7 +13,7 @@
     right: 0;
     background: var(--bg-primary);
     border-bottom: 1px solid var(--border-primary);
-    padding: var(--spacing-md) var(--spacing-lg);
+    padding: 0.75rem 1rem; /* Reduced padding for compact header */
     z-index: 100;
     display: flex;
     justify-content: space-between;
@@ -21,11 +21,12 @@
 }
 
 .analytics-header h1 {
-    font-size: 1.25rem;
+    font-size: 1.1rem; /* Slightly smaller for mobile */
     font-weight: 700;
     color: var(--primary);
     font-family: var(--font-serif);
     margin: 0;
+    white-space: nowrap; /* Prevent wrapping */
 }
 
 .analytics-nav {
@@ -342,9 +343,24 @@
 
 @media (max-width: 768px) {
     .analytics-header {
-        flex-direction: column;
-        gap: var(--spacing-sm);
-        align-items: flex-start;
+        padding: 0.5rem 0.75rem; /* Even more compact on mobile */
+    }
+    
+    .analytics-header h1 {
+        font-size: 0.95rem; /* Smaller on mobile to prevent wrapping */
+    }
+    
+    .slide-counter {
+        font-size: 0.8rem; /* Smaller counter on mobile */
+    }
+    
+    .nav-button {
+        padding: 0.4rem 0.75rem; /* Smaller buttons on mobile */
+        font-size: 0.85rem;
+    }
+    
+    .slide-container {
+        padding-top: 70px; /* Reduced since header is now single-line */
     }
 
     .slide {
