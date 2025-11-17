@@ -176,7 +176,7 @@
                             <li><strong>Green:</strong> North-Eastern (Bangweulu/Muchinga potential)</li>
                         </ul>
                         <div class="visualization-wrapper">
-                            <iframe class="visualization-iframe" src="Analytics/zambia_3d_economic_map.html" title="3D Economic Map"></iframe>
+                            <iframe class="visualization-iframe" data-src="Analytics/zambia_3d_economic_map.html" title="3D Economic Map"></iframe>
                         </div>
                         <a href="Analytics/zambia_3d_economic_map.html" target="_blank" class="visualization-link">
                             Open in Full Screen
@@ -226,7 +226,7 @@
                             </p>
                         </div>
                         <div class="visualization-wrapper">
-                            <iframe class="visualization-iframe" src="Analytics/zambia_electrification_heatmap.html" title="Electrification Heatmap"></iframe>
+                            <iframe class="visualization-iframe" data-src="Analytics/zambia_electrification_heatmap.html" title="Electrification Heatmap"></iframe>
                         </div>
                         <a href="Analytics/zambia_electrification_heatmap.html" target="_blank" class="visualization-link">
                             Open in Full Screen
@@ -286,7 +286,7 @@
                             <strong>North-Eastern Quadrant</strong> (Muchinga, Northern, Luapula) shows the largest gap: 90/100 agricultural potential but only 35/100 infrastructure. This asymmetry represents the highest opportunity for infrastructure arbitrage.
                         </p>
                         <div class="visualization-wrapper">
-                            <iframe class="visualization-iframe" src="Analytics/zambia_quadrant_analysis.html" title="Quadrant Analysis"></iframe>
+                            <iframe class="visualization-iframe" data-src="Analytics/zambia_quadrant_analysis.html" title="Quadrant Analysis"></iframe>
                         </div>
                         <a href="Analytics/zambia_quadrant_analysis.html" target="_blank" class="visualization-link">
                             Open in Full Screen
@@ -333,7 +333,7 @@
                             </p>
                         </div>
                         <div class="visualization-wrapper">
-                            <iframe class="visualization-iframe" src="Analytics/zambia_opportunity_dashboard.html" title="Opportunity Dashboard"></iframe>
+                            <iframe class="visualization-iframe" data-src="Analytics/zambia_opportunity_dashboard.html" title="Opportunity Dashboard"></iframe>
                         </div>
                         <a href="Analytics/zambia_opportunity_dashboard.html" target="_blank" class="visualization-link">
                             Open in Full Screen
@@ -584,6 +584,51 @@
 
         // Initialize
         updateSlide();
+        
+        // ============================================
+        // LAZY LOADING FOR IFRAMES (Performance Optimization)
+        // ============================================
+        
+        // Intersection Observer for lazy loading iframes
+        const iframeObserverOptions = {
+            root: null,
+            rootMargin: '100px', // Start loading 100px before iframe enters viewport
+            threshold: 0.01
+        };
+        
+        const iframeObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const iframe = entry.target;
+                    const dataSrc = iframe.getAttribute('data-src');
+                    
+                    if (dataSrc && !iframe.src) {
+                        // Add loading class
+                        iframe.parentElement.classList.add('loading');
+                        
+                        // Set the src to trigger loading
+                        iframe.src = dataSrc;
+                        
+                        // Remove loading class when loaded
+                        iframe.addEventListener('load', function() {
+                            iframe.parentElement.classList.remove('loading');
+                            iframe.parentElement.classList.add('loaded');
+                        }, { once: true });
+                        
+                        // Stop observing this iframe
+                        iframeObserver.unobserve(iframe);
+                    }
+                }
+            });
+        }, iframeObserverOptions);
+        
+        // Observe all iframes with data-src
+        document.addEventListener('DOMContentLoaded', function() {
+            const lazyIframes = document.querySelectorAll('iframe[data-src]');
+            lazyIframes.forEach(iframe => {
+                iframeObserver.observe(iframe);
+            });
+        });
     </script>
 </body>
 </html>
