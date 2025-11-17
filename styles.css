@@ -29,17 +29,23 @@ body {
     -moz-osx-font-smoothing: grayscale;
 }
 
-/* CSS Custom Properties - Professional Institutional Palette */
+/* CSS Custom Properties - Professional Institutional Palette with Zambian Heritage */
 :root {
     /* Primary Colors - Deep Blue (Trust, Authority) */
     --primary: #1e3a5f;
     --primary-dark: #0f1f35;
     --primary-light: #2d4f7c;
     
-    /* Secondary - Emerald (Strategic Accent) */
+    /* Secondary - Emerald (Zambia Green - Natural Resources & Sovereignty) */
     --secondary: #059669;
     --secondary-dark: #047857;
     --secondary-light: #10b981;
+    
+    /* Copper - Heritage & Innovation (Zambia's Mineral Wealth) */
+    --copper: #DE6E00;
+    --copper-light: #F38218;
+    --copper-dark: #C85A00;
+    --copper-subtle: rgba(222, 110, 0, 0.1);
     
     /* Neutral Grays - Professional Foundation */
     --gray-50: #f9fafb;
@@ -150,20 +156,24 @@ body {
 .logo-icon {
     width: 36px;
     height: 36px;
-    background: var(--primary);
+    background: linear-gradient(135deg, var(--copper) 0%, var(--copper-dark) 50%, var(--primary) 100%);
     border-radius: var(--border-radius);
     display: flex;
     align-items: center;
     justify-content: center;
-    transition: background var(--transition);
+    transition: all var(--transition);
+    box-shadow: 0 2px 4px rgba(222, 110, 0, 0.15);
 }
 
 .logo-icon:hover {
-    background: var(--primary-dark);
+    background: linear-gradient(135deg, var(--copper-light) 0%, var(--copper) 50%, var(--primary-dark) 100%);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px rgba(222, 110, 0, 0.25);
 }
 
 .logo-icon svg {
     color: white;
+    filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.2));
 }
 
 /* Remove shimmer animation - too flashy */
@@ -229,13 +239,35 @@ body {
     transition: all var(--transition);
 }
 
-/* Hero Section - Research Paper Style */
+/* Hero Section - Research Paper Style with Subtle Copper Background */
 .hero-section {
     padding: 8rem 0 4rem;
     text-align: left;
     position: relative;
     background: var(--bg-primary);
     border-bottom: 1px solid var(--border-primary);
+    overflow: hidden;
+}
+
+.hero-section::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 50%;
+    height: 100%;
+    background-image: url('/assets/images/copper-pipes.png');
+    background-size: cover;
+    background-position: center left;
+    opacity: 0.35;
+    z-index: 0;
+    pointer-events: none;
+    filter: grayscale(5%);
+}
+
+.hero-section > * {
+    position: relative;
+    z-index: 1;
 }
 
 .hero-badge {
@@ -784,17 +816,35 @@ body {
     border: 1px solid #fde68a;
 }
 
-/* Impact Section - Data Visualization Style */
+/* Impact Section - Data Visualization Style with Grid Background */
 .impact-section {
     background: var(--bg-secondary);
     border-top: 1px solid var(--border-primary);
     border-bottom: 1px solid var(--border-primary);
     padding: var(--spacing-2xl) 0;
     margin: var(--spacing-2xl) 0;
+    position: relative;
+    overflow: hidden;
+}
+
+.impact-section::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: url('/assets/images/grid.png');
+    background-size: cover;
+    background-position: center;
+    opacity: 0.30;
+    z-index: 0;
+    pointer-events: none;
 }
 
 .impact-content {
     position: relative;
+    z-index: 1;
 }
 
 .impact-header {

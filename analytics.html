@@ -407,13 +407,13 @@
                 <span class="slide-counter">
                     <span id="current-slide">1</span> / <span id="total-slides">8</span>
                 </span>
-                <button class="nav-button" id="prev-btn" onclick="changeSlide(-1)">
+                <button class="nav-button" id="prev-btn">
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
                         <path d="M15 18L9 12L15 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                     </svg>
                     Previous
                 </button>
-                <button class="nav-button" id="next-btn" onclick="changeSlide(1)">
+                <button class="nav-button" id="next-btn">
                     Next
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
                         <path d="M9 18L15 12L9 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
@@ -465,7 +465,7 @@
                         <div class="next-slide-title" id="next-title-1">Executive Summary</div>
                         <div class="next-slide-description" id="next-desc-1">The Tale of Two Zambias</div>
                     </div>
-                    <button class="next-button-large" onclick="changeSlide(1)" id="next-btn-1">
+                    <button class="next-button-large" id="next-btn-1">
                         Next
                         <svg viewBox="0 0 24 24" fill="none">
                             <path d="M5 12H19M19 12L12 5M19 12L12 19" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
@@ -503,7 +503,7 @@
                         <div class="next-slide-title" id="next-title-2">3D Economic Geography Map</div>
                         <div class="next-slide-description" id="next-desc-2">Visualizing the Concentration Problem</div>
                     </div>
-                    <button class="next-button-large" onclick="changeSlide(1)" id="next-btn-2">
+                    <button class="next-button-large" id="next-btn-2">
                         Next
                         <svg viewBox="0 0 24 24" fill="none">
                             <path d="M5 12H19M19 12L12 5M19 12L12 19" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
@@ -548,7 +548,7 @@
                         <div class="next-slide-title" id="next-title-3">Electrification Heatmap</div>
                         <div class="next-slide-description" id="next-desc-3">The Energy Apartheid</div>
                     </div>
-                    <button class="next-button-large" onclick="changeSlide(1)" id="next-btn-3">
+                    <button class="next-button-large" id="next-btn-3">
                         Next
                         <svg viewBox="0 0 24 24" fill="none">
                             <path d="M5 12H19M19 12L12 5M19 12L12 19" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
@@ -598,7 +598,7 @@
                         <div class="next-slide-title" id="next-title-4">Quadrant Analysis</div>
                         <div class="next-slide-description" id="next-desc-4">Four Strategic Economic Zones</div>
                     </div>
-                    <button class="next-button-large" onclick="changeSlide(1)" id="next-btn-4">
+                    <button class="next-button-large" id="next-btn-4">
                         Next
                         <svg viewBox="0 0 24 24" fill="none">
                             <path d="M5 12H19M19 12L12 5M19 12L12 19" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
@@ -658,7 +658,7 @@
                         <div class="next-slide-title" id="next-title-5">Opportunity Dashboard</div>
                         <div class="next-slide-description" id="next-desc-5">Data-Driven Investment Framework</div>
                     </div>
-                    <button class="next-button-large" onclick="changeSlide(1)" id="next-btn-5">
+                    <button class="next-button-large" id="next-btn-5">
                         Next
                         <svg viewBox="0 0 24 24" fill="none">
                             <path d="M5 12H19M19 12L12 5M19 12L12 19" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
@@ -705,7 +705,7 @@
                         <div class="next-slide-title" id="next-title-6">2024 Drought Impact Study</div>
                         <div class="next-slide-description" id="next-desc-6">A Natural Experiment in Infrastructure Vulnerability</div>
                     </div>
-                    <button class="next-button-large" onclick="changeSlide(1)" id="next-btn-6">
+                    <button class="next-button-large" id="next-btn-6">
                         Next
                         <svg viewBox="0 0 24 24" fill="none">
                             <path d="M5 12H19M19 12L12 5M19 12L12 19" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
@@ -765,7 +765,7 @@
                         <div class="next-slide-title" id="next-title-7">Strategic Analysis Overview</div>
                         <div class="next-slide-description" id="next-desc-7">Investment Framework & Recommendations</div>
                     </div>
-                    <button class="next-button-large" onclick="changeSlide(1)" id="next-btn-7">
+                    <button class="next-button-large" id="next-btn-7">
                         Next
                         <svg viewBox="0 0 24 24" fill="none">
                             <path d="M5 12H19M19 12L12 5M19 12L12 19" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
@@ -882,32 +882,52 @@
             return false; // Prevent any default behavior
         }
         
-        // Attach event listeners to ensure buttons work (run immediately after DOM is ready)
+        // Track if already initialized to prevent double-firing
+        let isInitialized = false;
+        
+        // Attach event listeners to ensure buttons work
         function attachButtonListeners() {
-            // Attach click handlers to all next buttons
+            if (isInitialized) return; // Prevent double initialization
+            isInitialized = true;
+            
+            // Header navigation buttons
+            const headerNext = document.getElementById('next-btn');
+            const headerPrev = document.getElementById('prev-btn');
+            
+            if (headerNext) {
+                headerNext.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    changeSlide(1);
+                }, { once: false });
+            }
+            
+            if (headerPrev) {
+                headerPrev.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    changeSlide(-1);
+                }, { once: false });
+            }
+            
+            // Footer next buttons for each slide
             for (let i = 1; i <= totalSlides; i++) {
                 const btn = document.getElementById(`next-btn-${i}`);
                 if (btn) {
-                    // Remove existing onclick and use addEventListener
-                    btn.onclick = null;
                     btn.addEventListener('click', function(e) {
                         e.preventDefault();
                         e.stopPropagation();
-                        if (!this.disabled) {
+                        if (!this.disabled && currentSlide < totalSlides) {
                             changeSlide(1);
                         }
-                        return false;
-                    });
+                    }, { once: false });
                 }
             }
         }
         
-        // Run immediately and also on DOMContentLoaded as backup
-        if (document.readyState === 'loading') {
-            document.addEventListener('DOMContentLoaded', attachButtonListeners);
-        } else {
+        // Initialize on DOMContentLoaded
+        document.addEventListener('DOMContentLoaded', function() {
             attachButtonListeners();
-        }
+            updateSlide();
+        });
 
         // Keyboard navigation
         document.addEventListener('keydown', (e) => {
@@ -923,4 +943,3 @@
     </script>
 </body>
 </html>
-

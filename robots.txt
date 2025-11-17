@@ -1,0 +1,10 @@
+User-agent: *
+Allow: /
+
+# Sitemap location
+Sitemap: https://coppercloud.ai/sitemap.xml
+
+# Prevent crawling of future admin areas
+Disallow: /admin/
+Disallow: /api/
+Disallow: /.git/
