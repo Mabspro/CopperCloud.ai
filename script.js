@@ -9,6 +9,7 @@ document.addEventListener('DOMContentLoaded', function() {
     initMobileMenu();
     initIntersectionObserver();
     initParallaxEffects();
+    initValueStackInteractivity();
 });
 
 // Header scroll effects
@@ -389,6 +390,53 @@ function initAccessibility() {
 // Initialize accessibility features
 document.addEventListener('DOMContentLoaded', initAccessibility);
 
+// Value Stack Interactivity - Show connections between layers
+function initValueStackInteractivity() {
+    const stackCards = document.querySelectorAll('.stack-card');
+    const arrows = document.querySelectorAll('.arrow-connector');
+    
+    if (!stackCards.length) return;
+    
+    stackCards.forEach((card, index) => {
+        card.addEventListener('mouseenter', function() {
+            // Highlight this card
+            this.style.transform = 'translateY(-6px) scale(1.02)';
+            
+            // Highlight adjacent arrows
+            if (index > 0) {
+                arrows[index - 1].style.opacity = '1';
+                arrows[index - 1].style.transform = 'scale(1.1)';
+            }
+            if (index < arrows.length) {
+                arrows[index].style.opacity = '1';
+                arrows[index].style.transform = 'scale(1.1)';
+            }
+            
+            // Subtle highlight on adjacent cards
+            const prevCard = stackCards[index - 1];
+            const nextCard = stackCards[index + 1];
+            if (prevCard) {
+                prevCard.style.opacity = '0.9';
+            }
+            if (nextCard) {
+                nextCard.style.opacity = '0.9';
+            }
+        });
+        
+        card.addEventListener('mouseleave', function() {
+            // Reset all
+            stackCards.forEach(c => {
+                c.style.transform = '';
+                c.style.opacity = '1';
+            });
+            arrows.forEach(a => {
+                a.style.opacity = '';
+                a.style.transform = '';
+            });
+        });
+    });
+}
+
 // Export functions for potential external use
 window.CopperCloudSite = {
     trackEvent,
@@ -396,3 +444,15 @@ window.CopperCloudSite = {
     initLazyLoading,
     initFormHandling
 };
+
+// Deck link functionality
+document.addEventListener('DOMContentLoaded', function() {
+    const deckLink = document.getElementById('deck-link');
+    if (deckLink) {
+        deckLink.addEventListener('click', function(e) {
+            e.preventDefault();
+            const deckUrl = 'https://claude.ai/public/artifacts/3b70511c-cf9f-4da1-9120-eb94b5819391';
+            window.open(deckUrl, '_blank');
+        });
+    }
+});

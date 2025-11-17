@@ -1,0 +1,926 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Zambia Grid Analysis - Deep Analytics | CopperCloud</title>
+    <meta name="description" content="Comprehensive geospatial and economic analysis of Zambia's infrastructure-determined economy. Interactive visualizations and strategic insights.">
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Charter:ital,wght@0,400;0,700;1,400&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        /* Analytics Page Specific Styles - Full Page Slide Experience */
+        .analytics-container {
+            min-height: 100vh;
+            background: var(--bg-primary);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .analytics-header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: var(--bg-primary);
+            border-bottom: 1px solid var(--border-primary);
+            padding: var(--spacing-md) var(--spacing-lg);
+            z-index: 100;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .analytics-header h1 {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--primary);
+            font-family: var(--font-serif);
+            margin: 0;
+        }
+
+        .analytics-nav {
+            display: flex;
+            gap: var(--spacing-md);
+            align-items: center;
+        }
+
+        .slide-counter {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            font-weight: 500;
+        }
+
+        .nav-button {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-primary);
+            color: var(--text-primary);
+            padding: var(--spacing-xs) var(--spacing-md);
+            border-radius: var(--border-radius);
+            cursor: pointer;
+            transition: all var(--transition);
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-xs);
+        }
+
+        .nav-button:hover:not(:disabled) {
+            background: var(--bg-tertiary);
+            border-color: var(--border-accent);
+            color: var(--primary);
+        }
+
+        .nav-button:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+        }
+
+        .slide-container {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            padding-top: 80px;
+        }
+
+        .slide {
+            display: none;
+            flex: 1;
+            animation: slideIn 0.4s ease-out;
+            min-height: calc(100vh - 80px);
+            padding: var(--spacing-2xl) var(--spacing-lg);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .slide.active {
+            display: flex;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .slide-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            max-width: 1200px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        .slide-title {
+            font-size: clamp(2rem, 5vw, 3rem);
+            font-weight: 700;
+            color: var(--primary);
+            font-family: var(--font-serif);
+            margin-bottom: var(--spacing-md);
+            line-height: 1.2;
+        }
+
+        .slide-subtitle {
+            font-size: clamp(1rem, 2vw, 1.25rem);
+            color: var(--text-secondary);
+            margin-bottom: var(--spacing-xl);
+            line-height: 1.7;
+        }
+
+        .slide-body {
+            font-size: clamp(0.95rem, 1.5vw, 1.1rem);
+            color: var(--text-primary);
+            line-height: 1.8;
+            margin-bottom: var(--spacing-xl);
+        }
+
+        .slide-body p {
+            margin-bottom: var(--spacing-md);
+        }
+
+        .slide-body strong {
+            color: var(--primary);
+            font-weight: 600;
+        }
+
+        .visualization-wrapper {
+            margin: var(--spacing-xl) 0;
+            border: 1px solid var(--border-primary);
+            border-radius: var(--border-radius-md);
+            overflow: hidden;
+            background: var(--bg-secondary);
+            flex-shrink: 0;
+        }
+
+        .visualization-iframe {
+            width: 100%;
+            height: 500px;
+            border: none;
+            display: block;
+        }
+
+        @media (min-height: 900px) {
+            .visualization-iframe {
+                height: 600px;
+            }
+        }
+
+        .visualization-link {
+            display: inline-flex;
+            align-items: center;
+            gap: var(--spacing-sm);
+            color: var(--secondary);
+            text-decoration: none;
+            font-weight: 600;
+            padding: var(--spacing-sm) var(--spacing-md);
+            border: 1px solid var(--border-primary);
+            border-radius: var(--border-radius);
+            transition: all var(--transition);
+            margin-top: var(--spacing-md);
+        }
+
+        .visualization-link:hover {
+            background: var(--bg-tertiary);
+            border-color: var(--secondary);
+        }
+
+        .key-metrics {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: var(--spacing-md);
+            margin: var(--spacing-xl) 0;
+            flex-shrink: 0;
+        }
+
+        .metric-box {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-primary);
+            border-left: 4px solid var(--secondary);
+            border-radius: var(--border-radius);
+            padding: var(--spacing-lg);
+        }
+
+        .metric-box h4 {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--text-tertiary);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: var(--spacing-xs);
+        }
+
+        .metric-box .value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--primary);
+            font-family: var(--font-serif);
+            line-height: 1;
+        }
+
+        .metric-box .label {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            margin-top: var(--spacing-xs);
+        }
+
+        .insight-box {
+            background: linear-gradient(135deg, rgba(5, 150, 105, 0.1) 0%, rgba(30, 58, 95, 0.1) 100%);
+            border-left: 4px solid var(--secondary);
+            border-radius: var(--border-radius);
+            padding: var(--spacing-lg);
+            margin: var(--spacing-xl) 0;
+        }
+
+        .insight-box h4 {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: var(--spacing-sm);
+            font-family: var(--font-serif);
+        }
+
+        .insight-box p {
+            color: var(--text-primary);
+            margin: 0;
+            line-height: 1.7;
+        }
+
+        .slide-list {
+            list-style: none;
+            padding: 0;
+            margin: var(--spacing-lg) 0;
+        }
+
+        .slide-list li {
+            padding: var(--spacing-sm) 0;
+            padding-left: var(--spacing-lg);
+            position: relative;
+            color: var(--text-primary);
+            line-height: 1.7;
+        }
+
+        .slide-list li:before {
+            content: "→";
+            position: absolute;
+            left: 0;
+            color: var(--secondary);
+            font-weight: 700;
+        }
+
+        /* Bottom Navigation - Prominent */
+        .slide-footer {
+            max-width: 1200px;
+            margin: 0 auto;
+            width: 100%;
+            padding: var(--spacing-xl) 0;
+            border-top: 1px solid var(--border-primary);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: var(--spacing-lg);
+        }
+
+        .next-slide-preview {
+            flex: 1;
+        }
+
+        .next-slide-label {
+            font-size: 0.85rem;
+            color: var(--text-tertiary);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            font-weight: 600;
+            margin-bottom: var(--spacing-xs);
+        }
+
+        .next-slide-title {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--primary);
+            font-family: var(--font-serif);
+            margin-bottom: var(--spacing-sm);
+        }
+
+        .next-slide-description {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+
+        .next-button-large {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: var(--spacing-md) var(--spacing-xl);
+            border-radius: var(--border-radius-md);
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all var(--transition);
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-sm);
+            white-space: nowrap;
+            box-shadow: var(--shadow-md);
+            pointer-events: auto;
+            position: relative;
+            z-index: 10;
+        }
+
+        .next-button-large:hover:not(:disabled) {
+            background: var(--primary);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .next-button-large:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .next-button-large svg {
+            width: 20px;
+            height: 20px;
+        }
+
+        @media (max-width: 768px) {
+            .analytics-header {
+                flex-direction: column;
+                gap: var(--spacing-sm);
+                align-items: flex-start;
+            }
+
+            .slide {
+                padding: var(--spacing-lg) var(--spacing-md);
+            }
+
+            .slide-title {
+                font-size: 1.75rem;
+            }
+
+            .visualization-iframe {
+                height: 400px;
+            }
+
+            .key-metrics {
+                grid-template-columns: 1fr;
+            }
+
+            .slide-footer {
+                flex-direction: column;
+                align-items: stretch;
+                gap: var(--spacing-md);
+            }
+
+            .next-button-large {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="analytics-container">
+        <header class="analytics-header">
+            <div style="display: flex; align-items: center; gap: var(--spacing-md);">
+                <a href="/" style="display: flex; align-items: center; gap: var(--spacing-sm); text-decoration: none; color: var(--text-secondary); transition: all var(--transition);" onmouseover="this.style.color='var(--primary)'" onmouseout="this.style.color='var(--text-secondary)'">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+                        <path d="M19 12H5M5 12L12 19M5 12L12 5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                    <span style="font-size: 0.9rem;">Back to Home</span>
+                </a>
+                <h1>Zambia Grid Analysis</h1>
+            </div>
+            <div class="analytics-nav">
+                <span class="slide-counter">
+                    <span id="current-slide">1</span> / <span id="total-slides">8</span>
+                </span>
+                <button class="nav-button" id="prev-btn" onclick="changeSlide(-1)">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+                        <path d="M15 18L9 12L15 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                    Previous
+                </button>
+                <button class="nav-button" id="next-btn" onclick="changeSlide(1)">
+                    Next
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+                        <path d="M9 18L15 12L9 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                </button>
+            </div>
+        </header>
+
+        <div class="slide-container">
+            <!-- Slide 1: Title -->
+            <div class="slide active" data-slide="1">
+                <div class="slide-content">
+                    <h1 class="slide-title">Zambia Economic Grid Analysis</h1>
+                    <p class="slide-subtitle">
+                        A comprehensive geospatial and economic analysis revealing the infrastructure-determined concentration of Zambia's economy and the systematic underdevelopment of high-potential regions.
+                    </p>
+                    <div class="insight-box">
+                        <h4>Core Finding</h4>
+                        <p>
+                            <strong>87.7%</strong> of Zambia's economic activity is concentrated along a narrow infrastructure spine (the "Line of Rail"), while regions with the highest agricultural potential remain systematically locked out by a <strong>12.8x electrification gap</strong> between urban (62%) and rural (4.5%) areas.
+                        </p>
+                    </div>
+                    <div class="key-metrics">
+                        <div class="metric-box">
+                            <h4>Economic Concentration</h4>
+                            <div class="value">87.7%</div>
+                            <div class="label">GDP along Line of Rail</div>
+                        </div>
+                        <div class="metric-box">
+                            <h4>Electrification Gap</h4>
+                            <div class="value">12.8x</div>
+                            <div class="label">Urban vs. Rural</div>
+                        </div>
+                        <div class="metric-box">
+                            <h4>Top Opportunity</h4>
+                            <div class="value">85.84</div>
+                            <div class="label">Muchinga Province Score</div>
+                        </div>
+                        <div class="metric-box">
+                            <h4>Infrastructure Gap</h4>
+                            <div class="value">90%</div>
+                            <div class="label">Muchinga Province</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="slide-footer">
+                    <div class="next-slide-preview">
+                        <div class="next-slide-label">See Next</div>
+                        <div class="next-slide-title" id="next-title-1">Executive Summary</div>
+                        <div class="next-slide-description" id="next-desc-1">The Tale of Two Zambias</div>
+                    </div>
+                    <button class="next-button-large" onclick="changeSlide(1)" id="next-btn-1">
+                        Next
+                        <svg viewBox="0 0 24 24" fill="none">
+                            <path d="M5 12H19M19 12L12 5M19 12L12 19" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Slide 2: Executive Summary -->
+            <div class="slide" data-slide="2">
+                <div class="slide-content">
+                    <h2 class="slide-title">Executive Summary</h2>
+                    <p class="slide-subtitle">The Tale of Two Zambias</p>
+                    <div class="slide-body">
+                        <p>
+                            Zambia's economy operates as <strong>two fundamentally different countries</strong> overlaid on the same geography. This analysis reveals a stark pattern of extreme spatial concentration creating massive untapped opportunity in what we term the "neglected quadrants."
+                        </p>
+                        <p>
+                            The <strong>Vertical Axis</strong> (Line of Rail) represents the industrial spine built 120 years ago for mineral extraction. It includes cities from Livingstone through Lusaka to the Copperbelt and Solwezi, accounting for 65-70% of national GDP with 61.3% average electrification.
+                        </p>
+                        <p>
+                            The <strong>Neglected Quadrants</strong>—North-Eastern, South-Eastern, and South-Western regions—possess 70-90/100 agricultural potential but only 15-20/100 current development, creating opportunity gaps of 50-75 points.
+                        </p>
+                        <div class="insight-box">
+                            <h4>Investment Thesis</h4>
+                            <p>
+                                The "bare and neglected" quadrants aren't empty—they're untapped primary-sector economies locked by predictable, solvable infrastructure constraints. This is mispriced optionality.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                <div class="slide-footer">
+                    <div class="next-slide-preview">
+                        <div class="next-slide-label">See Next</div>
+                        <div class="next-slide-title" id="next-title-2">3D Economic Geography Map</div>
+                        <div class="next-slide-description" id="next-desc-2">Visualizing the Concentration Problem</div>
+                    </div>
+                    <button class="next-button-large" onclick="changeSlide(1)" id="next-btn-2">
+                        Next
+                        <svg viewBox="0 0 24 24" fill="none">
+                            <path d="M5 12H19M19 12L12 5M19 12L12 19" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Slide 3: 3D Economic Map -->
+            <div class="slide" data-slide="3">
+                <div class="slide-content">
+                    <h2 class="slide-title">3D Economic Geography Map</h2>
+                    <p class="slide-subtitle">Visualizing the Concentration Problem</p>
+                    <div class="slide-body">
+                        <p>
+                            This interactive 3D map shows cities as vertical bars where <strong>height represents GDP contribution</strong>. The visualization makes the concentration problem immediately apparent—the Line of Rail cities tower over the rest of the country.
+                        </p>
+                        <p>
+                            <strong>Color coding</strong> represents economic zones:
+                        </p>
+                        <ul class="slide-list">
+                            <li><strong>Gold:</strong> Vertical Axis (Line of Rail - Industrial Spine)</li>
+                            <li><strong>Orange:</strong> North-Western Extension (New Copperbelt)</li>
+                            <li><strong>Blue:</strong> South-Eastern (Chipata/Eastern agriculture)</li>
+                            <li><strong>Crimson:</strong> South-Western (Liuwa/Western neglected)</li>
+                            <li><strong>Green:</strong> North-Eastern (Bangweulu/Muchinga potential)</li>
+                        </ul>
+                        <div class="visualization-wrapper">
+                            <iframe class="visualization-iframe" src="Analytics/zambia_3d_economic_map.html" title="3D Economic Map"></iframe>
+                        </div>
+                        <a href="Analytics/zambia_3d_economic_map.html" target="_blank" class="visualization-link">
+                            Open in Full Screen
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+                                <path d="M18 13V19A2 2 0 0 1 16 21H5A2 2 0 0 1 3 19V8A2 2 0 0 1 5 6H11M15 3H21M21 3V9M21 3L13 11" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                        </a>
+                    </div>
+                </div>
+                <div class="slide-footer">
+                    <div class="next-slide-preview">
+                        <div class="next-slide-label">See Next</div>
+                        <div class="next-slide-title" id="next-title-3">Electrification Heatmap</div>
+                        <div class="next-slide-description" id="next-desc-3">The Energy Apartheid</div>
+                    </div>
+                    <button class="next-button-large" onclick="changeSlide(1)" id="next-btn-3">
+                        Next
+                        <svg viewBox="0 0 24 24" fill="none">
+                            <path d="M5 12H19M19 12L12 5M19 12L12 19" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Slide 4: Electrification Heatmap -->
+            <div class="slide" data-slide="4">
+                <div class="slide-content">
+                    <h2 class="slide-title">Electrification Heatmap</h2>
+                    <p class="slide-subtitle">The Energy Apartheid</p>
+                    <div class="slide-body">
+                        <p>
+                            This heatmap reveals the <strong>electrical grid coverage</strong> across Zambia, exposing what we term "energy apartheid." The bright vertical stripe down the center represents the Line of Rail corridor with strong grid coverage, while the dark periphery shows regions with minimal or no grid access.
+                        </p>
+                        <p>
+                            <strong>Key observations:</strong>
+                        </p>
+                        <ul class="slide-list">
+                            <li>Lusaka and Copperbelt cities show 70-80% electrification rates</li>
+                            <li>Rural areas in neglected quadrants show near-zero grid access</li>
+                            <li>The 12.8x gap between urban (62%) and rural (4.5%) electrification</li>
+                            <li>White markers indicate economic hubs, sized by GDP contribution</li>
+                        </ul>
+                        <div class="insight-box">
+                            <h4>Strategic Implication</h4>
+                            <p>
+                                The electrification gap isn't just a development metric—it's a structural barrier preventing value-addition in agriculture, manufacturing, and services. Industrial-grade power is unavailable outside the spine, forcing raw materials to be trucked to Lusaka for processing.
+                            </p>
+                        </div>
+                        <div class="visualization-wrapper">
+                            <iframe class="visualization-iframe" src="Analytics/zambia_electrification_heatmap.html" title="Electrification Heatmap"></iframe>
+                        </div>
+                        <a href="Analytics/zambia_electrification_heatmap.html" target="_blank" class="visualization-link">
+                            Open in Full Screen
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+                                <path d="M18 13V19A2 2 0 0 1 16 21H5A2 2 0 0 1 3 19V8A2 2 0 0 1 5 6H11M15 3H21M21 3V9M21 3L13 11" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                        </a>
+                    </div>
+                </div>
+                <div class="slide-footer">
+                    <div class="next-slide-preview">
+                        <div class="next-slide-label">See Next</div>
+                        <div class="next-slide-title" id="next-title-4">Quadrant Analysis</div>
+                        <div class="next-slide-description" id="next-desc-4">Four Strategic Economic Zones</div>
+                    </div>
+                    <button class="next-button-large" onclick="changeSlide(1)" id="next-btn-4">
+                        Next
+                        <svg viewBox="0 0 24 24" fill="none">
+                            <path d="M5 12H19M19 12L12 5M19 12L12 19" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Slide 5: Quadrant Analysis -->
+            <div class="slide" data-slide="5">
+                <div class="slide-content">
+                    <h2 class="slide-title">Quadrant Analysis</h2>
+                    <p class="slide-subtitle">Four Strategic Economic Zones</p>
+                    <div class="slide-body">
+                        <p>
+                            Zambia is divided into four economic quadrants based on infrastructure axes. Each radar chart shows <strong>Infrastructure</strong>, <strong>Economic Potential</strong>, <strong>Current GDP</strong>, and <strong>Grid Access</strong> on a 0-100 scale.
+                        </p>
+                        <div class="key-metrics">
+                            <div class="metric-box">
+                                <h4>North-Eastern</h4>
+                                <div class="value">90/100</div>
+                                <div class="label">Potential vs. 35/100 Infrastructure</div>
+                            </div>
+                            <div class="metric-box">
+                                <h4>South-Eastern</h4>
+                                <div class="value">85/100</div>
+                                <div class="label">Agriculture Potential</div>
+                            </div>
+                            <div class="metric-box">
+                                <h4>South-Western</h4>
+                                <div class="value">80/100</div>
+                                <div class="label">Opportunity Score</div>
+                            </div>
+                            <div class="metric-box">
+                                <h4>North-Western</h4>
+                                <div class="value">60%</div>
+                                <div class="label">Electrification (Mining Priority)</div>
+                            </div>
+                        </div>
+                        <p>
+                            <strong>North-Eastern Quadrant</strong> (Muchinga, Northern, Luapula) shows the largest gap: 90/100 agricultural potential but only 35/100 infrastructure. This asymmetry represents the highest opportunity for infrastructure arbitrage.
+                        </p>
+                        <div class="visualization-wrapper">
+                            <iframe class="visualization-iframe" src="Analytics/zambia_quadrant_analysis.html" title="Quadrant Analysis"></iframe>
+                        </div>
+                        <a href="Analytics/zambia_quadrant_analysis.html" target="_blank" class="visualization-link">
+                            Open in Full Screen
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+                                <path d="M18 13V19A2 2 0 0 1 16 21H5A2 2 0 0 1 3 19V8A2 2 0 0 1 5 6H11M15 3H21M21 3V9M21 3L13 11" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                        </a>
+                    </div>
+                </div>
+                <div class="slide-footer">
+                    <div class="next-slide-preview">
+                        <div class="next-slide-label">See Next</div>
+                        <div class="next-slide-title" id="next-title-5">Opportunity Dashboard</div>
+                        <div class="next-slide-description" id="next-desc-5">Data-Driven Investment Framework</div>
+                    </div>
+                    <button class="next-button-large" onclick="changeSlide(1)" id="next-btn-5">
+                        Next
+                        <svg viewBox="0 0 24 24" fill="none">
+                            <path d="M5 12H19M19 12L12 5M19 12L12 19" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Slide 6: Opportunity Dashboard -->
+            <div class="slide" data-slide="6">
+                <div class="slide-content">
+                    <h2 class="slide-title">Opportunity Dashboard</h2>
+                    <p class="slide-subtitle">Data-Driven Investment Framework</p>
+                    <div class="slide-body">
+                        <p>
+                            This four-panel dashboard quantifies the opportunity across multiple dimensions:
+                        </p>
+                        <ul class="slide-list">
+                            <li><strong>Top Left:</strong> GDP vs. Electrification scatter plot—cities in top-right are developed; bottom-left are neglected</li>
+                            <li><strong>Top Right:</strong> Infrastructure Score by Province—Lusaka/Copperbelt (90, 85) vs. Western/Luapula (25, 28)</li>
+                            <li><strong>Bottom Left:</strong> Opportunity Index—Muchinga (90), Western (85), Northern (80) = highest opportunity</li>
+                            <li><strong>Bottom Right:</strong> Transport Corridor Strategic Value—Lobito (95) most strategic, TAZARA (60) least</li>
+                        </ul>
+                        <div class="insight-box">
+                            <h4>Key Insight</h4>
+                            <p>
+                                Provinces with <strong>highest opportunity scores</strong> are exactly those with <strong>lowest infrastructure scores</strong>—confirming the substrate arbitrage thesis. The gap between today's underdevelopment and tomorrow's infrastructure arrival is measurable, mapped, and investable.
+                            </p>
+                        </div>
+                        <div class="visualization-wrapper">
+                            <iframe class="visualization-iframe" src="Analytics/zambia_opportunity_dashboard.html" title="Opportunity Dashboard"></iframe>
+                        </div>
+                        <a href="Analytics/zambia_opportunity_dashboard.html" target="_blank" class="visualization-link">
+                            Open in Full Screen
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+                                <path d="M18 13V19A2 2 0 0 1 16 21H5A2 2 0 0 1 3 19V8A2 2 0 0 1 5 6H11M15 3H21M21 3V9M21 3L13 11" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                        </a>
+                    </div>
+                </div>
+                <div class="slide-footer">
+                    <div class="next-slide-preview">
+                        <div class="next-slide-label">See Next</div>
+                        <div class="next-slide-title" id="next-title-6">2024 Drought Impact Study</div>
+                        <div class="next-slide-description" id="next-desc-6">A Natural Experiment in Infrastructure Vulnerability</div>
+                    </div>
+                    <button class="next-button-large" onclick="changeSlide(1)" id="next-btn-6">
+                        Next
+                        <svg viewBox="0 0 24 24" fill="none">
+                            <path d="M5 12H19M19 12L12 5M19 12L12 19" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Slide 7: Drought Impact Study -->
+            <div class="slide" data-slide="7">
+                <div class="slide-content">
+                    <h2 class="slide-title">2024 Drought Impact Study</h2>
+                    <p class="slide-subtitle">A Natural Experiment in Infrastructure Vulnerability</p>
+                    <div class="slide-body">
+                        <p>
+                            The 2024 El Niño drought served as a <strong>natural experiment</strong>, starkly revealing Zambia's bifurcated economy. While the mining sector (Tier 1) largely survived through private power solutions, the domestic economy (Tier 2) faced catastrophic paralysis due to 21-hour daily load shedding.
+                        </p>
+                        <div class="key-metrics">
+                            <div class="metric-box">
+                                <h4>Power Deficit</h4>
+                                <div class="value">1,381 MW</div>
+                                <div class="label">vs. 2,400 MW Peak Demand</div>
+                            </div>
+                            <div class="metric-box">
+                                <h4>Load Shedding</h4>
+                                <div class="value">17-21 hrs</div>
+                                <div class="label">Daily (Tier 2 Economy)</div>
+                            </div>
+                            <div class="metric-box">
+                                <h4>Hydropower</h4>
+                                <div class="value">83%</div>
+                                <div class="label">Dependence (Vulnerability)</div>
+                            </div>
+                            <div class="metric-box">
+                                <h4>Maize Harvest</h4>
+                                <div class="value">-50%</div>
+                                <div class="label">Collapse</div>
+                            </div>
+                        </div>
+                        <div class="insight-box">
+                            <h4>Strategic Implication</h4>
+                            <p>
+                                This crisis underscores the <strong>existential vulnerability</strong> of centralized, hydro-dependent infrastructure and the urgent need for a sovereign, distributed energy-first grid. The drought exposed that infrastructure concentration isn't just an economic problem—it's a national security risk.
+                            </p>
+                        </div>
+                        <a href="Analytics/drought-impact-study.html" target="_blank" class="visualization-link">
+                            Read Full Drought Impact Study
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+                                <path d="M18 13V19A2 2 0 0 1 16 21H5A2 2 0 0 1 3 19V8A2 2 0 0 1 5 6H11M15 3H21M21 3V9M21 3L13 11" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                        </a>
+                    </div>
+                </div>
+                <div class="slide-footer">
+                    <div class="next-slide-preview">
+                        <div class="next-slide-label">See Next</div>
+                        <div class="next-slide-title" id="next-title-7">Strategic Analysis Overview</div>
+                        <div class="next-slide-description" id="next-desc-7">Investment Framework & Recommendations</div>
+                    </div>
+                    <button class="next-button-large" onclick="changeSlide(1)" id="next-btn-7">
+                        Next
+                        <svg viewBox="0 0 24 24" fill="none">
+                            <path d="M5 12H19M19 12L12 5M19 12L12 19" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Slide 8: Strategic Analysis Overview -->
+            <div class="slide" data-slide="8">
+                <div class="slide-content">
+                    <h2 class="slide-title">Strategic Analysis Overview</h2>
+                    <p class="slide-subtitle">Investment Framework & Recommendations</p>
+                    <div class="slide-body">
+                        <p>
+                            The complete strategic analysis provides a comprehensive framework for investment, policy, and development coordination. Key sections include:
+                        </p>
+                        <ul class="slide-list">
+                            <li><strong>Part I:</strong> Anatomy of Concentration (Vertical Axis, Electrification Divide, Drought Case Study)</li>
+                            <li><strong>Part II:</strong> The Horizontal Axis (Nacala, TAZARA, Lobito Corridors)</li>
+                            <li><strong>Part III:</strong> The Four Quadrants (Detailed profiles of each neglected zone)</li>
+                            <li><strong>Part IV:</strong> Strategic Recommendations (Government, Investors, Development Partners)</li>
+                            <li><strong>Part V:</strong> Lobito Corridor Deep Dive (Economic modeling, geopolitical implications)</li>
+                            <li><strong>Part VI:</strong> Quantified Opportunity Matrix (Investment size bands, sector return profiles)</li>
+                        </ul>
+                        <div class="insight-box">
+                            <h4>Top 5 Investment Targets</h4>
+                            <p>
+                                1. <strong>Muchinga</strong> (85.84) - Agriculture gap: 75pts | Infra gap: 90%<br>
+                                2. <strong>Luapula</strong> (80.96) - Agriculture gap: 60pts | Infra gap: 93%<br>
+                                3. <strong>Northern</strong> (80.50) - Agriculture gap: 60pts | Infra gap: 92%<br>
+                                4. <strong>Western</strong> (79.90) - Agriculture gap: 55pts | Infra gap: 95%<br>
+                                5. <strong>Eastern</strong> (61.20) - Agriculture gap: 35pts | Infra gap: 70%
+                            </p>
+                        </div>
+                        <p>
+                            <strong>The Grid Standpoint</strong> isn't just a theory—it's a scored, mapped, timed investment methodology. The gap between today's underdevelopment and tomorrow's infrastructure arrival is the alpha.
+                        </p>
+                    </div>
+                </div>
+                <div class="slide-footer">
+                    <div class="next-slide-preview">
+                        <div class="next-slide-label">Complete</div>
+                        <div class="next-slide-title">Analysis Complete</div>
+                        <div class="next-slide-description">Return to home or explore individual visualizations</div>
+                    </div>
+                    <a href="/" class="next-button-large" style="text-decoration: none;">
+                        Return Home
+                        <svg viewBox="0 0 24 24" fill="none">
+                            <path d="M3 9L12 2L21 9V20C21 20.5304 20.7893 21.0391 20.4142 21.4142C20.0391 21.7893 19.5304 22 19 22H5C4.46957 22 3.96086 21.7893 3.58579 21.4142C3.21071 21.0391 3 20.5304 3 20V9Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentSlide = 1;
+        const totalSlides = 8;
+
+        // Slide metadata for next slide preview
+        const slideMetadata = {
+            1: { title: "Executive Summary", desc: "The Tale of Two Zambias" },
+            2: { title: "3D Economic Geography Map", desc: "Visualizing the Concentration Problem" },
+            3: { title: "Electrification Heatmap", desc: "The Energy Apartheid" },
+            4: { title: "Quadrant Analysis", desc: "Four Strategic Economic Zones" },
+            5: { title: "Opportunity Dashboard", desc: "Data-Driven Investment Framework" },
+            6: { title: "2024 Drought Impact Study", desc: "A Natural Experiment in Infrastructure Vulnerability" },
+            7: { title: "Strategic Analysis Overview", desc: "Investment Framework & Recommendations" },
+            8: { title: "Complete", desc: "Analysis complete" }
+        };
+
+        function updateSlide() {
+            // Hide all slides
+            document.querySelectorAll('.slide').forEach(slide => {
+                slide.classList.remove('active');
+            });
+
+            // Show current slide
+            const slide = document.querySelector(`.slide[data-slide="${currentSlide}"]`);
+            if (slide) {
+                slide.classList.add('active');
+            }
+
+            // Update counter
+            document.getElementById('current-slide').textContent = currentSlide;
+            document.getElementById('total-slides').textContent = totalSlides;
+
+            // Update header buttons
+            const prevBtn = document.getElementById('prev-btn');
+            const nextBtn = document.getElementById('next-btn');
+            if (prevBtn) prevBtn.disabled = currentSlide === 1;
+            if (nextBtn) nextBtn.disabled = currentSlide === totalSlides;
+
+            // Update footer next buttons - only disable on last slide
+            for (let i = 1; i <= totalSlides; i++) {
+                const footerNextBtn = document.getElementById(`next-btn-${i}`);
+                if (footerNextBtn) {
+                    footerNextBtn.disabled = currentSlide === totalSlides;
+                }
+            }
+
+            // Scroll to top
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function changeSlide(direction) {
+            const newSlide = currentSlide + direction;
+            if (newSlide >= 1 && newSlide <= totalSlides) {
+                currentSlide = newSlide;
+                updateSlide();
+            }
+            return false; // Prevent any default behavior
+        }
+        
+        // Attach event listeners to ensure buttons work (run immediately after DOM is ready)
+        function attachButtonListeners() {
+            // Attach click handlers to all next buttons
+            for (let i = 1; i <= totalSlides; i++) {
+                const btn = document.getElementById(`next-btn-${i}`);
+                if (btn) {
+                    // Remove existing onclick and use addEventListener
+                    btn.onclick = null;
+                    btn.addEventListener('click', function(e) {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        if (!this.disabled) {
+                            changeSlide(1);
+                        }
+                        return false;
+                    });
+                }
+            }
+        }
+        
+        // Run immediately and also on DOMContentLoaded as backup
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', attachButtonListeners);
+        } else {
+            attachButtonListeners();
+        }
+
+        // Keyboard navigation
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowLeft') {
+                changeSlide(-1);
+            } else if (e.key === 'ArrowRight') {
+                changeSlide(1);
+            }
+        });
+
+        // Initialize
+        updateSlide();
+    </script>
+</body>
+</html>
+
