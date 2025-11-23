@@ -2,6 +2,10 @@
 // Enhanced functionality for the landing page
 
 document.addEventListener('DOMContentLoaded', function() {
+    // Mark page as JS-enabled
+    document.documentElement.classList.add('js');
+    document.documentElement.classList.remove('no-js');
+    
     // Initialize all functionality
     initScrollEffects();
     initAnimatedCounters();
@@ -10,6 +14,27 @@ document.addEventListener('DOMContentLoaded', function() {
     initIntersectionObserver();
     initParallaxEffects();
     initValueStackInteractivity();
+    
+    // Fallback: ensure elements in viewport are visible immediately and after delay
+    function showVisibleElements() {
+        const elements = document.querySelectorAll('.premium-card, .metric-item, .stack-card');
+        elements.forEach((el, index) => {
+            const rect = el.getBoundingClientRect();
+            const isVisible = rect.top < window.innerHeight + 200 && rect.bottom > -200;
+            if (isVisible && !el.classList.contains('animate-in')) {
+                setTimeout(() => {
+                    el.classList.add('animate-in');
+                }, index * 50);
+            }
+        });
+    }
+    
+    // Show immediately
+    showVisibleElements();
+    
+    // Show again after a delay to catch any missed
+    setTimeout(showVisibleElements, 300);
+    setTimeout(showVisibleElements, 1000);
 });
 
 // Header scroll effects
@@ -42,21 +67,33 @@ function initScrollEffects() {
 
 // Animated counters for metrics
 function initAnimatedCounters() {
-    const counters = document.querySelectorAll('[data-target]');
+    const counters = document.querySelectorAll('.metric-value[data-target]');
     
     const animateCounter = (counter) => {
-        const target = parseInt(counter.getAttribute('data-target'));
+        const target = parseFloat(counter.getAttribute('data-target'));
+        const isDecimal = counter.hasAttribute('data-decimal');
+        const unit = counter.getAttribute('data-unit') || '';
+        const unitElement = counter.querySelector('.metric-unit');
         const duration = 2000; // 2 seconds
-        const increment = target / (duration / 16); // 60fps
+        const steps = 60; // 60fps
+        const increment = target / (duration / (1000 / steps));
         let current = 0;
         
         const updateCounter = () => {
             current += increment;
             if (current < target) {
-                counter.textContent = Math.floor(current);
+                if (isDecimal) {
+                    counter.innerHTML = current.toFixed(1) + (unitElement ? unitElement.outerHTML : '');
+                } else {
+                    counter.innerHTML = Math.floor(current) + (unitElement ? unitElement.outerHTML : '');
+                }
                 requestAnimationFrame(updateCounter);
             } else {
-                counter.textContent = target;
+                if (isDecimal) {
+                    counter.innerHTML = target.toFixed(1) + (unitElement ? unitElement.outerHTML : '');
+                } else {
+                    counter.innerHTML = target + (unitElement ? unitElement.outerHTML : '');
+                }
             }
         };
         
@@ -71,7 +108,7 @@ function initAnimatedCounters() {
                 animateCounter(entry.target);
             }
         });
-    }, { threshold: 0.5 });
+    }, { threshold: 0.3 });
 
     counters.forEach(counter => {
         counterObserver.observe(counter);
@@ -140,17 +177,34 @@ function initIntersectionObserver() {
     };
 
     const observer = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
+        entries.forEach((entry, index) => {
             if (entry.isIntersecting) {
-                entry.target.classList.add('animate-in');
+                // Stagger animation for cards
+                setTimeout(() => {
+                    entry.target.classList.add('animate-in');
+                }, index * 100);
+                // Stop observing once animated
+                observer.unobserve(entry.target);
             }
         });
     }, observerOptions);
 
     // Observe elements for animation
-    const animateElements = document.querySelectorAll('.premium-card, .metric-item, .impact-stat, .timeline-item');
-    animateElements.forEach(el => {
-        observer.observe(el);
+    const animateElements = document.querySelectorAll('.premium-card, .metric-item, .impact-stat, .timeline-item, .stack-card');
+    animateElements.forEach((el, index) => {
+        // Check if element is already in viewport on load
+        const rect = el.getBoundingClientRect();
+        const isInViewport = rect.top < window.innerHeight && rect.bottom > 0;
+        
+        if (isInViewport) {
+            // If already visible, animate immediately with slight delay
+            setTimeout(() => {
+                el.classList.add('animate-in');
+            }, index * 50);
+        } else {
+            // Otherwise, observe for when it enters viewport
+            observer.observe(el);
+        }
     });
 }
 

@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="js">
 
 <head>
     <meta charset="UTF-8">
@@ -17,6 +17,11 @@
         rel="stylesheet">
 
     <link rel="stylesheet" href="styles.css">
+    
+    <!-- Leaflet CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+        integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+        crossorigin="" />
 </head>
 
 <body>
@@ -35,6 +40,7 @@
                 <a href="#initiative">Doctrine</a>
                 <a href="#research">Research</a>
                 <a href="#roadmap">Roadmap</a>
+                <a href="#zambia-hubs">Hubs</a>
                 <a href="#partners">Governance</a>
                 <a href="/one-pager.html" target="_blank">Policy Brief</a>
             </div>
@@ -69,6 +75,12 @@
                         <span>View Infrastructure</span>
                     </a>
                 </div>
+                <div class="hero-scroll-indicator" onclick="document.querySelector('#initiative').scrollIntoView({behavior: 'smooth'})">
+                    <span>Explore</span>
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M6 9l6 6 6-6" />
+                    </svg>
+                </div>
             </div>
         </section>
 
@@ -80,22 +92,22 @@
                 </div>
                 <div class="metrics-grid">
                     <div class="metric-item">
-                        <span class="metric-value">1.6<span class="metric-unit">GW</span></span>
+                        <span class="metric-value" data-target="1.6" data-unit="GW" data-decimal="true">0<span class="metric-unit">GW</span></span>
                         <div class="metric-label">Renewable Potential</div>
                         <div class="metric-sublabel">By 2029 (Hydro + Solar)</div>
                     </div>
                     <div class="metric-item">
-                        <span class="metric-value">15<span class="metric-unit">+</span></span>
+                        <span class="metric-value" data-target="15" data-unit="+">0<span class="metric-unit">+</span></span>
                         <div class="metric-label">Policy Frameworks</div>
                         <div class="metric-sublabel">Published standards</div>
                     </div>
                     <div class="metric-item">
-                        <span class="metric-value">3</span>
+                        <span class="metric-value" data-target="3">0</span>
                         <div class="metric-label">Certification Tiers</div>
                         <div class="metric-sublabel">Sovereign-Ready</div>
                     </div>
                     <div class="metric-item">
-                        <span class="metric-value">2</span>
+                        <span class="metric-value" data-target="2">0</span>
                         <div class="metric-label">Major Studies</div>
                         <div class="metric-sublabel">Grid & Economic Geography</div>
                     </div>
@@ -103,7 +115,7 @@
             </div>
         </section>
 
-        <section class="section" id="governance">
+        <section class="section" id="roadmap">
             <div class="container">
                 <div class="section-header">
                     <h2 class="section-title">Strategic Roadmap</h2>
@@ -166,6 +178,18 @@
             </div>
         </section>
 
+        <section class="section" id="zambia-hubs">
+            <div class="container">
+                <div class="section-header">
+                    <h2 class="section-title">Zambia Infrastructure Hubs</h2>
+                    <p class="section-subtitle">Strategic locations for pilot deployment and national grid expansion across key economic corridors.</p>
+                </div>
+                <div class="map-container">
+                    <div id="zambia-map" style="height: 500px; border-radius: 12px; border: 1px solid var(--glass-border); overflow: hidden;"></div>
+                </div>
+            </div>
+        </section>
+
         <section class="section" id="initiative">
             <div class="container">
                 <div class="section-header">
@@ -210,6 +234,7 @@
                                 </svg>
                             </div>
                             <h4>Telecom</h4>
+                            <p>Dark fiber, open IX peering, DC-ready architecture</p>
                             <div class="card-ports">
                                 <div class="port-dot"></div>
                                 <div class="port-dot"></div>
@@ -236,6 +261,7 @@
                                 </svg>
                             </div>
                             <h4>Compute</h4>
+                            <p>Modular, sovereign-ready data centers with national orchestration</p>
                             <div class="card-ports">
                                 <div class="port-dot"></div>
                                 <div class="port-dot"></div>
@@ -513,6 +539,14 @@
         </div>
     </footer>
 
+    <!-- Leaflet JS -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+        integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
+        crossorigin=""></script>
+    
+    <!-- Main Site JavaScript -->
+    <script src="script.js"></script>
+    
     <script>
         // Mouse movement effect for cards
         document.querySelectorAll('.premium-card').forEach(card => {
@@ -524,6 +558,85 @@
                 card.style.setProperty('--mouse-y', `${y}px`);
             };
         });
+
+        // Initialize Zambia Map
+        function initZambiaMap() {
+            const mapElement = document.getElementById('zambia-map');
+            if (!mapElement) return;
+
+            // Center of Zambia
+            const map = L.map('zambia-map', {
+                zoomControl: true,
+                scrollWheelZoom: true,
+                attributionControl: true
+            }).setView([-13.1339, 27.8493], 6);
+
+            // Dark theme tile layer
+            L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+                attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
+                subdomains: 'abcd',
+                maxZoom: 19
+            }).addTo(map);
+
+            // Custom icon for hubs
+            const hubIcon = L.divIcon({
+                className: 'custom-hub-icon',
+                html: '<div style="background: linear-gradient(135deg, #c7a064 0%, #e0b878 100%); width: 20px; height: 20px; border-radius: 50%; border: 3px solid #0a0a0a; box-shadow: 0 0 10px rgba(199, 160, 100, 0.5);"></div>',
+                iconSize: [20, 20],
+                iconAnchor: [10, 10]
+            });
+
+            // Hub locations
+            const hubs = [
+                {
+                    name: 'Lusaka',
+                    coords: [-15.3875, 28.3228],
+                    description: 'Capital city and primary data center hub. Phase I pilot location.',
+                    phase: 'Phase I'
+                },
+                {
+                    name: 'Copperbelt',
+                    coords: [-12.8236, 28.1928],
+                    description: 'Industrial heartland. High energy demand and economic concentration.',
+                    phase: 'Phase I'
+                },
+                {
+                    name: 'Livingstone',
+                    coords: [-17.8419, 25.8543],
+                    description: 'Tourism gateway and cross-border connectivity hub. Phase II expansion.',
+                    phase: 'Phase II'
+                }
+            ];
+
+            // Add markers
+            hubs.forEach(hub => {
+                const marker = L.marker(hub.coords, { icon: hubIcon }).addTo(map);
+                marker.bindPopup(`
+                    <div style="color: #e0e0e0; font-family: 'Inter', sans-serif;">
+                        <h3 style="margin: 0 0 0.5rem 0; color: #c7a064; font-size: 1.1rem;">${hub.name}</h3>
+                        <p style="margin: 0 0 0.5rem 0; font-size: 0.9rem;">${hub.description}</p>
+                        <span style="display: inline-block; padding: 0.25rem 0.5rem; background: rgba(199, 160, 100, 0.2); border: 1px solid rgba(199, 160, 100, 0.3); border-radius: 4px; font-size: 0.8rem; color: #c7a064;">${hub.phase}</span>
+                    </div>
+                `);
+            });
+
+            // Add connection lines (optional visual)
+            if (hubs.length > 1) {
+                const coordinates = hubs.map(hub => hub.coords);
+                const polyline = L.polyline(coordinates, {
+                    color: 'rgba(199, 160, 100, 0.3)',
+                    weight: 2,
+                    dashArray: '5, 10'
+                }).addTo(map);
+            }
+        }
+
+        // Initialize map when DOM is ready
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', initZambiaMap);
+        } else {
+            initZambiaMap();
+        }
     </script>
 </body>
 
