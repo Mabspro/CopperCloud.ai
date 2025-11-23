@@ -14,6 +14,21 @@ html {
     scroll-behavior: smooth;
 }
 
+/* Smooth page transitions */
+body {
+    opacity: 0;
+    animation: fadeIn 0.6s ease-in forwards;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
 /* Typography */
 @import url('https://fonts.googleapis.com/css2?family=Charter:ital,wght@0,400;0,700;1,400&family=Inter:wght@300;400;500;600;700&display=swap');
 
@@ -244,6 +259,9 @@ body {
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     max-width: 900px;
+    opacity: 0;
+    transform: translateY(30px);
+    animation: fadeInUp 1s ease-out 0.3s forwards;
 }
 
 .hero-subtitle {
@@ -252,6 +270,9 @@ body {
     max-width: 700px;
     margin-bottom: 2.5rem;
     font-weight: 300;
+    opacity: 0;
+    transform: translateY(20px);
+    animation: fadeInUp 1s ease-out 0.5s forwards;
 }
 
 .hero-cta {
@@ -271,12 +292,53 @@ body {
     transition: all var(--transition-fast);
     font-size: 1rem;
     cursor: pointer;
+    position: relative;
+    overflow: hidden;
+}
+
+.btn .ripple {
+    position: absolute;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.4);
+    transform: scale(0);
+    animation: ripple-animation 0.6s ease-out;
+    pointer-events: none;
+}
+
+@keyframes ripple-animation {
+    to {
+        transform: scale(4);
+        opacity: 0;
+    }
 }
 
 .btn-primary {
     background: var(--accent-gold);
     color: #000;
     border: 1px solid var(--accent-gold);
+}
+
+.btn-primary {
+    position: relative;
+    overflow: hidden;
+}
+
+.btn-primary::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.3);
+    transform: translate(-50%, -50%);
+    transition: width 0.6s, height 0.6s;
+}
+
+.btn-primary:active::before {
+    width: 300px;
+    height: 300px;
 }
 
 .btn-primary:hover {
@@ -359,8 +421,9 @@ body {
 }
 
 .metric-item:hover {
-    transform: translateY(-5px);
+    transform: translateY(-6px) scale(1.02);
     border-color: var(--accent-gold);
+    box-shadow: 0 10px 25px rgba(199, 160, 100, 0.2);
 }
 
 .metric-value {
@@ -475,12 +538,92 @@ body {
     font-size: 2.5rem;
     margin-bottom: 1rem;
     color: var(--text-primary);
+    opacity: 0;
+    transform: translateY(20px);
+    animation: fadeInUp 0.8s ease-out 0.2s forwards;
+}
+
+@keyframes fadeInUp {
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
 .section-subtitle {
     font-size: 1.1rem;
     color: var(--text-secondary);
     line-height: 1.7;
+    opacity: 0;
+    transform: translateY(20px);
+    animation: fadeInUp 0.8s ease-out 0.4s forwards;
+}
+
+/* --- Roadmap Timeline --- */
+.roadmap-timeline {
+    margin: 3rem 0 4rem;
+    padding: 0 2rem;
+}
+
+.timeline-track {
+    position: relative;
+    height: 4px;
+    background: var(--glass-border);
+    border-radius: 2px;
+    margin: 2rem 0;
+}
+
+.timeline-progress {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    background: linear-gradient(90deg, var(--accent-gold) 0%, var(--accent-green-bright) 100%);
+    border-radius: 2px;
+    width: 0%;
+    transition: width 1s ease;
+}
+
+.timeline-marker {
+    position: absolute;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    cursor: pointer;
+    z-index: 10;
+}
+
+.marker-dot {
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background: var(--card-bg);
+    border: 3px solid var(--glass-border);
+    transition: all 0.3s ease;
+    margin-bottom: 0.5rem;
+}
+
+.timeline-marker:hover .marker-dot,
+.timeline-marker.active .marker-dot {
+    background: var(--accent-gold);
+    border-color: var(--accent-gold);
+    box-shadow: 0 0 15px rgba(199, 160, 100, 0.5);
+    transform: scale(1.3);
+}
+
+.marker-label {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    font-weight: 600;
+    white-space: nowrap;
+    transition: color 0.3s ease;
+}
+
+.timeline-marker:hover .marker-label,
+.timeline-marker.active .marker-label {
+    color: var(--accent-gold);
 }
 
 /* --- Cards Grid --- */
@@ -512,6 +655,21 @@ body {
     transform: translateY(0);
 }
 
+.premium-card.timeline-highlight {
+    border-color: var(--accent-gold);
+    box-shadow: 0 0 30px rgba(199, 160, 100, 0.3);
+    transform: translateY(-8px) scale(1.02);
+}
+
+@keyframes pulse {
+    0%, 100% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.05);
+    }
+}
+
 /* Fallback: if JS fails, show cards */
 .no-js .premium-card,
 .no-js .metric-item,
@@ -521,9 +679,9 @@ body {
 }
 
 .premium-card:hover {
-    transform: translateY(-5px);
+    transform: translateY(-8px) scale(1.02);
     border-color: var(--glass-highlight);
-    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+    box-shadow: 0 25px 50px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(199, 160, 100, 0.1);
 }
 
 .premium-card::after {
@@ -602,6 +760,17 @@ body {
 /* --- Value Stack Visualization (Dark Mode) --- */
 .infrastructure-visual {
     padding: 3rem 0;
+    position: relative;
+}
+
+/* Subtle glow effect on value stack cards */
+.value-stack-horizontal:hover .stack-card {
+    filter: brightness(1.05);
+}
+
+.value-stack-horizontal .stack-card:hover {
+    filter: brightness(1.1);
+    z-index: 10;
 }
 
 .value-stack-horizontal {
@@ -681,8 +850,9 @@ body {
 }
 
 .stack-card:hover {
-    transform: translateY(-5px);
-    border-color: var(--text-secondary);
+    transform: translateY(-8px) scale(1.03);
+    border-color: var(--accent-gold);
+    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(199, 160, 100, 0.2);
 }
 
 .stack-card h4 {
@@ -891,6 +1061,19 @@ body {
 
     .hero-scroll-indicator {
         bottom: 1rem;
+    }
+
+    .roadmap-timeline {
+        margin: 2rem 0 3rem;
+        padding: 0 1rem;
+    }
+
+    .timeline-marker {
+        transform: translate(-50%, -50%) scale(0.9);
+    }
+
+    .marker-label {
+        font-size: 0.75rem;
     }
 }
 

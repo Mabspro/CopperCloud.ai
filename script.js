@@ -35,7 +35,64 @@ document.addEventListener('DOMContentLoaded', function() {
     // Show again after a delay to catch any missed
     setTimeout(showVisibleElements, 300);
     setTimeout(showVisibleElements, 1000);
+    
+    // Initialize Roadmap Timeline
+    initRoadmapTimeline();
 });
+
+// Roadmap Timeline Interactions
+function initRoadmapTimeline() {
+    const markers = document.querySelectorAll('.timeline-marker');
+    const progressBar = document.getElementById('timeline-progress');
+    const roadmapSection = document.getElementById('roadmap');
+    
+    if (!markers.length || !progressBar) return;
+    
+    // Animate progress bar on scroll
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                setTimeout(() => {
+                    progressBar.style.width = '100%';
+                }, 500);
+            }
+        });
+    }, { threshold: 0.3 });
+    
+    if (roadmapSection) {
+        observer.observe(roadmapSection);
+    }
+    
+    // Marker hover interactions
+    markers.forEach((marker, index) => {
+        marker.addEventListener('mouseenter', function() {
+            const phase = this.dataset.phase;
+            const progress = phase === '1' ? '33%' : phase === '2' ? '66%' : '100%';
+            progressBar.style.width = progress;
+            
+            // Highlight corresponding card
+            const cards = document.querySelectorAll('#roadmap .premium-card');
+            cards.forEach(card => card.classList.remove('timeline-highlight'));
+            if (cards[index]) {
+                cards[index].classList.add('timeline-highlight');
+            }
+        });
+        
+        marker.addEventListener('click', function() {
+            const phase = this.dataset.phase;
+            const cards = document.querySelectorAll('#roadmap .premium-card');
+            const targetCard = cards[parseInt(phase) - 1];
+            
+            if (targetCard) {
+                targetCard.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                targetCard.style.animation = 'pulse 0.6s ease';
+                setTimeout(() => {
+                    targetCard.style.animation = '';
+                }, 600);
+            }
+        });
+    });
+}
 
 // Header scroll effects
 function initScrollEffects() {
@@ -234,25 +291,37 @@ function initParallaxEffects() {
     window.addEventListener('scroll', requestTick);
 }
 
-// Enhanced button interactions
+// Enhanced button interactions with ripple effect
 document.addEventListener('DOMContentLoaded', function() {
     const buttons = document.querySelectorAll('.btn');
     
     buttons.forEach(button => {
+        // Ripple effect on click
+        button.addEventListener('click', function(e) {
+            const ripple = document.createElement('span');
+            const rect = this.getBoundingClientRect();
+            const size = Math.max(rect.width, rect.height);
+            const x = e.clientX - rect.left - size / 2;
+            const y = e.clientY - rect.top - size / 2;
+            
+            ripple.style.width = ripple.style.height = size + 'px';
+            ripple.style.left = x + 'px';
+            ripple.style.top = y + 'px';
+            ripple.classList.add('ripple');
+            
+            this.appendChild(ripple);
+            
+            setTimeout(() => {
+                ripple.remove();
+            }, 600);
+        });
+        
         button.addEventListener('mouseenter', function() {
             this.style.transform = 'translateY(-2px) scale(1.02)';
         });
         
         button.addEventListener('mouseleave', function() {
             this.style.transform = 'translateY(0) scale(1)';
-        });
-        
-        button.addEventListener('mousedown', function() {
-            this.style.transform = 'translateY(0) scale(0.98)';
-        });
-        
-        button.addEventListener('mouseup', function() {
-            this.style.transform = 'translateY(-2px) scale(1.02)';
         });
     });
 });
